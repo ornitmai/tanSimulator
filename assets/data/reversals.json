@@ -1,0 +1,40 @@
+{
+  "description": "Geomagnetic polarity reversals - selected events",
+  "unit": "Ma (Million years ago)",
+  "events": [
+    { "name": "Brunhes", "start": 0, "end": 0.78, "polarity": "normal" },
+    { "name": "Matuyama", "start": 0.78, "end": 2.58, "polarity": "reversed",
+      "subEvents": [
+        { "name": "Jaramillo", "start": 0.99, "end": 1.07, "polarity": "normal" },
+        { "name": "Olduvai", "start": 1.77, "end": 1.95, "polarity": "normal" }
+      ]
+    },
+    { "name": "Gauss", "start": 2.58, "end": 3.58, "polarity": "normal",
+      "subEvents": [
+        { "name": "Kaena", "start": 3.03, "end": 3.12, "polarity": "reversed" },
+        { "name": "Mammoth", "start": 3.21, "end": 3.33, "polarity": "reversed" }
+      ]
+    },
+    { "name": "Gilbert", "start": 3.58, "end": 5.89, "polarity": "reversed",
+      "subEvents": [
+        { "name": "Cochiti", "start": 4.18, "end": 4.29, "polarity": "normal" },
+        { "name": "Nunivak", "start": 4.48, "end": 4.62, "polarity": "normal" },
+        { "name": "Sidufjall", "start": 4.80, "end": 4.89, "polarity": "normal" },
+        { "name": "Thvera", "start": 4.98, "end": 5.23, "polarity": "normal" }
+      ]
+    },
+    { "name": "Epoch 5", "start": 5.89, "end": 6.94, "polarity": "normal" },
+    { "name": "Epoch 6", "start": 6.94, "end": 7.7, "polarity": "reversed" },
+    { "name": "Epoch 7-13", "start": 7.7, "end": 25, "polarity": "mixed" },
+    { "name": "Late Cretaceous Normal", "start": 83, "end": 121, "polarity": "normal" },
+    { "name": "Cretaceous Mixed", "start": 121, "end": 170, "polarity": "mixed" },
+    { "name": "Kiaman Reverse", "start": 262, "end": 318, "polarity": "reversed" },
+    { "name": "Ordovician Mixed", "start": 440, "end": 490, "polarity": "mixed" },
+    { "name": "Oldest Records", "start": 700, "end": 800, "polarity": "mixed" }
+  ],
+  "marsComparison": {
+    "currentField": "~0.5 μT (crustal remnants only)",
+    "lostFieldAge": "~4 billion years ago",
+    "reason": "Mars core cooled → dynamo stopped → solar wind stripped atmosphere"
+  }
+}
