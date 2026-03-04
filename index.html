@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מגן הארץ — סימולטור גלוונומטר טנגנטי</title>
+
+  <!-- CDN Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col text-right">
+
+<!-- ============ NAVBAR ============ -->
+<nav class="bg-white border-b sticky top-0 z-[100] shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('hub')">
+      <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white shadow-lg">
+        <i class="fas fa-shield-halved text-xl"></i>
+      </div>
+      <div>
+        <span class="font-extrabold text-blue-900 text-lg block leading-none">מגן הארץ</span>
+        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">תיק חקירה S-704</span>
+      </div>
+    </div>
+    <div class="hidden md:flex gap-1">
+      <button onclick="showPage('hub')"   id="nav-hub"   class="nav-btn active px-4 py-2 rounded-lg text-sm font-bold">מרכז המשימה</button>
+      <button onclick="showPage('lab')"   id="nav-lab"   class="nav-btn px-4 py-2 rounded-lg text-sm font-bold">דו"ח מעבדה</button>
+      <button onclick="showPage('sim')"   id="nav-sim"   class="nav-btn px-4 py-2 rounded-lg text-sm font-bold">סימולטור</button>
+      <button onclick="showPage('earth')" id="nav-earth" class="nav-btn px-4 py-2 rounded-lg text-sm font-bold">המסע לליבה</button>
+    </div>
+    <div class="md:hidden">
+      <button onclick="toggleMobileMenu()" class="text-slate-600 p-2"><i class="fas fa-bars text-xl"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden md:hidden bg-white border-b px-4 py-4 space-y-2 shadow-inner text-right">
+  <button onclick="showPage('hub')"   class="block w-full px-4 py-3 rounded-xl font-bold">מרכז המשימה</button>
+  <button onclick="showPage('lab')"   class="block w-full px-4 py-3 rounded-xl font-bold">דו"ח מעבדה</button>
+  <button onclick="showPage('sim')"   class="block w-full px-4 py-3 rounded-xl font-bold">סימולטור</button>
+  <button onclick="showPage('earth')" class="block w-full px-4 py-3 rounded-xl font-bold">המסע לליבה</button>
+</div>
+
+<main class="flex-grow container mx-auto px-4 py-6 max-w-7xl">
+
+<!-- =============================================================== -->
+<!--                     PAGE 1: MISSION HUB                         -->
+<!-- =============================================================== -->
+<section id="page-hub" class="page active space-y-12 pb-20">
+
+  <!-- Header -->
+  <div class="bg-blue-900 text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+    <div class="relative z-10">
+      <span class="bg-red-500 text-xs font-bold px-4 py-1.5 rounded-full uppercase mb-4 inline-block tracking-widest shadow-md">סטטוס סיווג: גבוה</span>
+      <h1 class="text-5xl font-extrabold mb-4">פיצוח המגן המגנטי | תיק S-704</h1>
+      <p class="text-blue-100 text-xl max-w-3xl font-light">
+        <strong>המשימה:</strong> להציל את הספינה "אופקי" ולהבין את העתיד המגנטי של כדור הארץ.
+      </p>
+    </div>
+    <i class="fas fa-satellite-dish absolute -bottom-10 -left-10 text-[15rem] text-blue-800 opacity-20"></i>
+  </div>
+
+  <!-- Background Story -->
+  <div class="glass-card p-10 rounded-[2rem] border-r-8 border-r-blue-600 shadow-sm">
+    <h2 class="text-2xl font-black mb-6 text-blue-900 uppercase">1. סיפור הרקע: תעלומת הספינה "אופקי"</h2>
+    <div class="bg-blue-50/50 p-6 rounded-2xl italic text-lg leading-relaxed text-slate-700">
+      "אמצע הלילה, בלב האוקיינוס השקט. לפתע מסכי ה-GPS של ספינת המחקר 'אופקי' קופאים. קפטן שרה פנתה למצפן המגנטי, אך נחרדה לגלות שהוא מסתובב ב-180 מעלות ומצביע דרומה. הצוות חושש שהקטבים של כדור הארץ התהפכו. המשימה שלכם: להשתמש בפיזיקה כדי לגלות את האמת."
+    </div>
+  </div>
+
+  <!-- Role Play -->
+  <div class="space-y-6">
+    <h2 class="text-2xl font-black text-slate-800 flex items-center gap-3">
+      <i class="fas fa-users-gear text-blue-600"></i> 2. הכרות עם הצוות (Role Play)
+    </h2>
+    <p class="text-slate-600">לכל חבר בקבוצה יש תפקיד קריטי בפיצוח התיק. חלקו את התפקידים ביניכם:</p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="glass-card p-5 rounded-2xl border-b-4 border-b-blue-500 hover:scale-105 transition">
+        <div class="text-3xl mb-3">&#128187;</div>
+        <h3 class="font-bold text-blue-900 mb-1 text-sm">אנליסט/ית מודלים</h3>
+        <p class="text-[11px] text-slate-600 leading-relaxed">האחראי/ת על "העולם האידיאלי". מפעיל/ה את הסימולטור ובונה את הגרף המושלם.</p>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border-b-4 border-b-emerald-500 hover:scale-105 transition">
+        <div class="text-3xl mb-3">&#129489;&#8205;&#128300;</div>
+        <h3 class="font-bold text-emerald-900 mb-1 text-sm">הפיזיקאי/ת</h3>
+        <p class="text-[11px] text-slate-600 leading-relaxed">האחראי/ת על "העולם האמיתי". מבצע/ת את המדידות במעבדה, מתמודד/ת עם רעשים.</p>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border-b-4 border-b-orange-500 hover:scale-105 transition">
+        <div class="text-3xl mb-3">&#128640;</div>
+        <h3 class="font-bold text-orange-900 mb-1 text-sm">חוקר/ת עתיד</h3>
+        <p class="text-[11px] text-slate-600 leading-relaxed">האחראי/ת על ההשלכות. מחבר/ת את הממצאים לגאולוגיה, אקלים ותרחישי קיצון.</p>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border-b-4 border-b-purple-500 hover:scale-105 transition">
+        <div class="text-3xl mb-3">&#128208;</div>
+        <h3 class="font-bold text-purple-900 mb-1 text-sm">מומחה/ית המערכות</h3>
+        <p class="text-[11px] text-slate-600 leading-relaxed">האחראי/ת על הגישור. משווה בין המצוי (מעבדה) לרצוי (מודל) ומסביר את הפער.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase A: Brainstorming -->
+  <div class="p-8 bg-white rounded-3xl border shadow-sm">
+    <h3 class="text-2xl font-black mb-6 text-blue-900 uppercase">שלב א': ניתוח ראשוני של הזירה (Brainstorming)</h3>
+    <p class="text-slate-600 mb-6">לפני שניגשים למכשירים, כל חבר צוות בוחן את הדיווח מהספינה מהזווית שלו. האם הדיווח הגיוני?</p>
+    <div class="grid md:grid-cols-3 gap-6 mb-8 text-xs text-slate-600">
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+        <strong class="block text-emerald-700 mb-2">הפיזיקאי/ת:</strong>
+        האם שדה מגנטי יכול "להתאפס" או "להתחלף" בשניות? מה הכוחות הפועלים?
+      </div>
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+        <strong class="block text-orange-700 mb-2">חוקר/ת עתיד:</strong>
+        האם יש תיעוד היסטורי להיפוך קטבים? (חפשו: Geomagnetic Reversal)
+      </div>
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+        <strong class="block text-blue-700 mb-2">האנליסט/ית:</strong>
+        מה הסבירות לכשל טכני במכשירי הספינה לעומת אירוע גלובלי?
+      </div>
+    </div>
+    <textarea id="hubBrainstorm" class="w-full p-4 border rounded-2xl h-24 shadow-inner mb-4 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="המסקנה הראשונית שלנו..."></textarea>
+  </div>
+
+  <!-- Phase B: Lab -->
+  <div class="p-10 bg-emerald-50 rounded-[2.5rem] border-2 border-emerald-100 shadow-md space-y-6">
+    <h3 class="text-2xl font-black text-emerald-900 uppercase">שלב ב': יורדים לשטח — הניסוי הפיזי</h3>
+    <p class="text-slate-700 leading-relaxed">
+      כדי להבין את המגנטיות של כדור הארץ, אנחנו צריכים קודם כל לבנות מודל קטן במעבדה. אנחנו נבנה "גלוונומטר טנגנטי" שמדמה את יחסי הכוחות בין שדה מלאכותי לשדה כדור הארץ.
+    </p>
+    <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm text-sm text-emerald-800 space-y-2">
+      <p class="italic"><strong>המשימה:</strong> ביצוע מדידות במעבדה הפיזית ומציאת הקשר בין הזרם לזווית הסטייה.</p>
+      <p class="text-xs text-slate-600">מדדו זווית עבור זרמות I = 0.5, 1.0, 1.5, 2.0, 2.5A (צעדים של 0.5A). רשמו בטבלת הדו"ח.</p>
+    </div>
+    <button onclick="showPage('lab')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 flex items-center gap-3">
+      <i class="fas fa-file-signature"></i> לעבור לדו"ח המעבדה
+    </button>
+  </div>
+
+  <!-- Phase C: Simulation -->
+  <div class="p-10 bg-blue-50 rounded-[2.5rem] border-2 border-blue-100 shadow-md space-y-6">
+    <h3 class="text-2xl font-black text-blue-900 uppercase">שלב ג': המעבדה הווירטואלית — הסימולציה</h3>
+    <p class="text-slate-700 leading-relaxed">
+      במעבדה היה "רעש" (חיכוך, אי-דיוקים). כדי להבין את החוק הפיזיקלי הטהור, אנחנו חייבים לבודד משתנים. נשתמש בסימולטור כדי לחקור מה קורה כשמשנים רק את מספר הליפופים או את עוצמת השדה הפלנטרי.
+    </p>
+    <p class="text-xs text-slate-500">
+      התחילו עם אותם פרמטרים כמו במעבדה (N=5, R=0.10m, ישראל), ואז חקרו שינויים.
+    </p>
+    <button onclick="showPage('sim')" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 flex items-center gap-3">
+      <i class="fas fa-laptop-code"></i> פתיחת הסימולטור התלת-מימדי
+    </button>
+  </div>
+
+  <!-- Phase D: Earth Core -->
+  <div class="p-10 bg-orange-50 rounded-[2.5rem] border-2 border-orange-100 shadow-md space-y-6">
+    <h3 class="text-2xl font-black text-orange-900 uppercase">שלב ד': מסע אל הלב המגנטי</h3>
+    <p class="text-slate-700 leading-relaxed">
+      לפני שמסכמים, עלינו להבין מה קורה בתוך כדור הארץ שמייצר את כל זה. הגיע הזמן לצלול פנימה אל הדינמו הפלנטרי.
+    </p>
+    <button onclick="showPage('earth')" class="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 flex items-center gap-3">
+      <i class="fas fa-globe-americas"></i> לחקור את מבנה כדור הארץ
+    </button>
+  </div>
+
+  <!-- Phase E: Final Verdict -->
+  <div class="glass-card p-10 rounded-[2.5rem] shadow-xl space-y-10">
+    <h3 class="text-2xl font-black text-blue-900 uppercase border-b-2 border-slate-100 pb-4">שלב ה': מסקנות ופיצוח התיק</h3>
+    <div class="space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-6">
+        <strong class="text-slate-700">עוצמת שדה כדור הארץ המחושבת (B<sub>H</sub>):</strong>
+        <input id="hubBHValue" type="text" class="border-b-2 border-blue-400 outline-none w-32 text-center text-blue-700 font-bold" placeholder="--- μT">
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <label class="font-bold text-sm">בעלי חיים (נדידה):</label>
+          <textarea id="hubAnimals" class="w-full p-4 border rounded-xl text-xs h-28" placeholder="השפעת היפוך קטבים..."></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="font-bold text-sm">אקלים וקרינה:</label>
+          <textarea id="hubClimate" class="w-full p-4 border rounded-xl text-xs h-28" placeholder="מה יקרה למגן שלנו?"></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="font-bold text-sm">טכנולוגיה (GPS):</label>
+          <textarea id="hubTech" class="w-full p-4 border rounded-xl text-xs h-28" placeholder="האם הספינה באמת בסכנה?"></textarea>
+        </div>
+      </div>
+      <div class="bg-red-50 p-8 rounded-2xl border-2 border-red-100">
+        <h4 class="font-black text-red-900 mb-4">פסק הדין הסופי:</h4>
+        <textarea id="hubVerdict" class="w-full p-5 border-2 border-red-200 rounded-2xl h-32 outline-none focus:ring-2 focus:ring-red-400 shadow-sm" placeholder="מה ההמלצה לקפטן שרה?"></textarea>
+      </div>
+    </div>
+
+    <!-- Reflection -->
+    <div class="pt-8 border-t space-y-6">
+      <h3 class="text-xl font-bold text-slate-800 uppercase">רפלקציה צוותית</h3>
+      <div class="overflow-x-auto rounded-2xl border">
+        <table class="w-full text-xs text-right">
+          <thead class="bg-slate-100 text-slate-500 font-bold">
+            <tr><th class="p-4 border-l">הקטגוריה</th><th class="p-4 border-l">תיאור התהליך</th><th class="p-4 text-center">ציון (1-5)</th></tr>
+          </thead>
+          <tbody class="divide-y">
+            <tr>
+              <td class="p-4 font-bold bg-slate-50/50 border-l">תרבות של טעות</td>
+              <td class="p-4"><textarea class="w-full p-2 text-[10px] border-none bg-transparent h-16" placeholder="תארו טעות הכי גדולה... איך הגבתם?"></textarea></td>
+              <td class="p-4"><input type="number" min="1" max="5" class="w-12 mx-auto p-2 border rounded-lg text-center font-bold"></td>
+            </tr>
+            <tr>
+              <td class="p-4 font-bold bg-slate-50/50 border-l">דינמיקה קבוצתית</td>
+              <td class="p-4"><textarea class="w-full p-2 text-[10px] border-none bg-transparent h-16" placeholder="איך פתרתם מחלוקת בצוות?"></textarea></td>
+              <td class="p-4"><input type="number" min="1" max="5" class="w-12 mx-auto p-2 border rounded-lg text-center font-bold"></td>
+            </tr>
+            <tr>
+              <td class="p-4 font-bold bg-slate-50/50 border-l">אומץ מדעי</td>
+              <td class="p-4"><textarea class="w-full p-2 text-[10px] border-none bg-transparent h-16" placeholder="האם שיניתם משהו בניסוי למרות ההוראות?"></textarea></td>
+              <td class="p-4"><input type="number" min="1" max="5" class="w-12 mx-auto p-2 border rounded-lg text-center font-bold"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deep Dive -->
+  <div class="p-10 bg-slate-900 text-white rounded-[2.5rem] shadow-2xl space-y-8">
+    <h3 class="text-3xl font-black text-blue-400 flex items-center gap-3"><i class="fas fa-brain"></i> שלב ו': שאלות העמקה</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-4">
+        <h4 class="font-bold text-lg text-blue-300">למה השדה המגנטי מתהפך?</h4>
+        <p class="text-sm opacity-80 leading-relaxed">
+          לפי <strong>תיאוריית הדינמו</strong>, השדה נוצר מתנועת ברזל נוזלי בליבה. התנועה הזו היא כאוטית (כמו מזג אוויר). מדי פעם, מערבולות בליבה משנות כיוון, וזה גורם ל"קריסה" זמנית של השדה ולהיווצרותו מחדש בכיוון הפוך.
+        </p>
+      </div>
+      <div class="space-y-4">
+        <h4 class="font-bold text-lg text-blue-300">איך יודעים שהיו היפוכים בעבר?</h4>
+        <p class="text-sm opacity-80 leading-relaxed">
+          חוקרים את <strong>הפליאומגנטיזם</strong>. כשסלעים געשיים בקרקעית האוקיינוס מתקררים, המינרלים המגנטיים שבהם מסתדרים לפי הקטבים של אותו רגע ו"קופאים". כך נוצר "סרט הקלטה" של מיליוני שנים.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rubric -->
+  <div class="p-10 bg-slate-50 rounded-[2.5rem] border-2 border-slate-200 shadow-inner">
+    <h3 class="text-2xl font-black mb-8 text-center text-slate-800 uppercase tracking-tighter">מחוון הערכה (Rubric)</h3>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-[11px] leading-relaxed">
+      <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm"><span class="text-blue-600 font-bold block mb-1">25% דיוק מדעי:</span> ביצוע הניסוי הפיזי והבנת הנוסחאות.</div>
+      <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm"><span class="text-emerald-600 font-bold block mb-1">25% ניתוח מודלים:</span> איכות הגרפים בסימולטור.</div>
+      <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm"><span class="text-amber-600 font-bold block mb-1">25% תרבות של טעות:</span> כנות בדיווח על שגיאות.</div>
+      <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm"><span class="text-purple-600 font-bold block mb-1">25% עבודת צוות:</span> השתתפות כל בעלי התפקידים.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== -->
+<!--                     PAGE 2: LAB REPORT                          -->
+<!-- =============================================================== -->
+<section id="page-lab" class="page space-y-8">
+  <h2 class="text-3xl font-extrabold text-blue-900">דו"ח מעבדה דיגיטלי</h2>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Left: System params + BH result -->
+    <div class="space-y-6">
+      <div class="glass-card p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 class="font-bold text-blue-800 border-b pb-2">נתוני המערכת</h3>
+        <label class="block text-xs font-bold">מספר ליפופים (N):
+          <input type="number" id="labWindings" value="5" min="1" max="100" class="w-full p-2 border rounded mt-1">
+        </label>
+        <label class="block text-xs font-bold">רדיוס הלולאה (R) [ס"מ]:
+          <input type="number" id="labRadius" value="10" min="1" max="50" step="0.1" class="w-full p-2 border rounded mt-1">
+        </label>
+      </div>
+
+      <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl text-center">
+        <div class="text-[10px] text-slate-400 uppercase mb-1">השיפוע (Slope)</div>
+        <div id="labSlopeDisplay" class="text-3xl font-mono font-black">---</div>
+        <div id="labBHSection" class="mt-4 hidden">
+          <div class="text-[10px] text-amber-400 uppercase mb-2">חשבו את B<sub>H</sub> מתוך השיפוע</div>
+          <div class="flex items-center gap-2 justify-center">
+            <input type="number" id="labBHInput" step="0.1" min="0"
+              class="w-24 p-2 rounded-lg text-center font-mono font-bold text-slate-900 text-lg bg-white"
+              placeholder="?">
+            <span class="text-sm text-slate-300">μT</span>
+            <button id="labBHCheck"
+              class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition">
+              בדוק
+            </button>
+          </div>
+          <div id="labBHFeedback" class="mt-2 text-sm font-bold min-h-[1.5rem]"></div>
+        </div>
+        <div id="labBHWaiting" class="mt-4">
+          <div class="text-[10px] text-slate-500 uppercase">שדה כדור הארץ (B<sub>H</sub>)</div>
+          <div class="text-sm text-slate-400 mt-1">נדרשות לפחות 2 מדידות</div>
+        </div>
+      </div>
+
+      <!-- Comparison section (populated by charts.js) -->
+      <div id="labComparisonCard" class="hidden comparison-card space-y-4">
+        <h4 class="text-xs font-bold uppercase text-blue-300">השוואה: מעבדה מול סימולטור</h4>
+        <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
+          <div><div class="text-slate-400">מעבדה</div><div id="compLabBH" class="comparison-value text-red-400">--</div></div>
+          <div><div class="text-slate-400">סימולטור</div><div id="compSimBH" class="comparison-value text-green-400">--</div></div>
+          <div><div class="text-slate-400">ספרות</div><div id="compLitBH" class="comparison-value text-blue-400">25.0</div></div>
+        </div>
+        <div class="text-center">
+          <div class="text-[10px] text-slate-400">שגיאה יחסית</div>
+          <div id="compError" class="text-2xl font-mono font-bold text-amber-400">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Table + Chart -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Measurement station -->
+      <div class="glass-card rounded-2xl overflow-hidden shadow-sm">
+        <div class="p-4 bg-emerald-50 border-b-2 border-emerald-200 space-y-3">
+          <div class="text-xs font-bold text-emerald-800">קבעו זרם בריאוסטט ולחצו "קח מדידה":</div>
+          <div class="flex items-center gap-3">
+            <label class="text-sm font-bold text-slate-700 whitespace-nowrap">I =</label>
+            <input type="number" id="labCurrentInput" step="0.1" min="0" max="5" value="0.5"
+              class="w-24 p-2 border-2 border-emerald-400 rounded-xl text-center font-bold text-lg bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            <span class="text-sm text-slate-500">A</span>
+            <button onclick="LabReport.takeMeasurement()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-black shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+              <i class="fas fa-ruler-combined"></i> קח מדידה
+            </button>
+          </div>
+        </div>
+
+        <table class="w-full text-sm text-center">
+          <thead class="bg-slate-100 font-bold">
+            <tr>
+              <th class="p-3">#</th>
+              <th class="p-3">זרם I [A]<div class="text-[9px] font-normal text-slate-400">(קבעתם)</div></th>
+              <th class="p-3 text-blue-700">זווית &theta; [°]<div class="text-[9px] font-normal text-blue-400">(רשמו מה מדדתם)</div></th>
+              <th class="p-3 text-slate-400">tan(&theta;)<div class="text-[9px] font-normal">(מחושב)</div></th>
+              <th class="p-3 text-slate-400">B<sub>loop</sub> [μT]<div class="text-[9px] font-normal">(מחושב)</div></th>
+              <th class="p-3"></th>
+            </tr>
+          </thead>
+          <tbody id="labTableBody">
+            <tr><td colspan="6" class="py-8 italic text-slate-300">עדיין אין מדידות — קבעו זרם ולחצו "קח מדידה"</td></tr>
+          </tbody>
+        </table>
+        <div class="p-3 flex justify-end">
+          <button onclick="LabReport.clearAll()" class="text-red-500 text-xs font-bold hover:underline">נקה הכל</button>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-3xl shadow-sm relative" style="height: 380px;">
+        <canvas id="labChart"></canvas>
+      </div>
+
+      <!-- Comparison chart -->
+      <div id="comparisonChartContainer" class="glass-card p-4 rounded-3xl shadow-sm relative hidden" style="height: 380px;">
+        <canvas id="comparisonChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== -->
+<!--                     PAGE 3: 3D SIMULATOR                        -->
+<!-- =============================================================== -->
+<section id="page-sim" class="page space-y-6">
+
+  <!-- Student Instructions -->
+  <div class="sim-guide bg-white border-2 border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+    <button onclick="this.parentElement.classList.toggle('guide-open')" class="w-full flex items-center justify-between p-4 text-right hover:bg-blue-50 transition">
+      <span class="font-bold text-blue-900 text-sm flex items-center gap-2">
+        <i class="fas fa-book-open text-blue-500"></i> הוראות לתלמיד — איך עובדים עם הסימולטור?
+      </span>
+      <i class="fas fa-chevron-down guide-chevron text-blue-400 transition-transform"></i>
+    </button>
+    <div class="guide-body px-6 pb-6 space-y-5">
+      <div class="p-4 bg-blue-50 rounded-xl space-y-3">
+        <h4 class="font-black text-blue-900 text-sm">שלב 1: ניסוי בסיסי (כמו במעבדה)</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-center border rounded-lg overflow-hidden">
+            <thead class="bg-blue-100 font-bold text-blue-900">
+              <tr><th class="p-2">קבועים</th><th class="p-2">משתנה</th><th class="p-2">מודדים</th></tr>
+            </thead>
+            <tbody class="bg-white">
+              <tr><td class="p-2 border-t">N=5, R=0.10m, כוכב=ישראל</td><td class="p-2 border-t">זרם I</td><td class="p-2 border-t">זווית &theta;</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="text-xs text-slate-700 space-y-1 list-decimal list-inside leading-relaxed">
+          <li>הפעילו מקור מתח (מתג למעלה)</li>
+          <li>הגדירו זרם 0.5A &larr; לחצו <strong>"קח מדידה"</strong></li>
+          <li>חזרו עם 1.0A, 1.5A, 2.0A, 2.5A</li>
+          <li>הנקודות אמורות ליצור קו ישר דרך הראשית</li>
+          <li>השיפוע = 1/B<sub>H</sub> &larr; חשבו את B<sub>H</sub></li>
+        </ol>
+      </div>
+      <div class="p-4 bg-emerald-50 rounded-xl space-y-3">
+        <h4 class="font-black text-emerald-900 text-sm">שלב 2: חקירה מתקדמת (רק בסימולציה)</h4>
+        <ul class="text-xs text-slate-700 space-y-1 list-disc list-inside leading-relaxed">
+          <li>נקו דגימות ושנו N &rarr; מה קורה לשיפוע?</li>
+          <li>שנו כוכב (מאדים) &rarr; איך B<sub>H</sub> משפיע?</li>
+          <li>הפעילו מודלי שגיאה &rarr; מה קורה לפיזור?</li>
+          <li>הפעילו סערה מגנטית &rarr; מה קורה למחט?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-12 gap-6">
+
+    <!-- Controls sidebar -->
+    <aside class="lg:col-span-3 space-y-4 sim-controls-sidebar">
+      <div class="sim-controls-handle"></div>
+      <div class="bg-white p-5 rounded-3xl border shadow-sm space-y-5 sticky top-20">
+        <h2 class="font-bold text-blue-900 border-b pb-3 flex items-center gap-2">
+          <i class="fas fa-sliders-h"></i> בקרה וירטואלית
+        </h2>
+
+        <!-- Power + Current -->
+        <div class="sim-control-group space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-[10px] font-bold uppercase text-slate-400 tracking-tighter">מקור מתח (DC)</span>
+            <input type="checkbox" id="simPower" class="w-6 h-6 accent-red-600 cursor-pointer">
+          </div>
+          <div>
+            <label>זרם (I): <span id="simValI" class="text-blue-600 font-bold">0.50 A</span></label>
+            <input type="range" id="simInputI" min="-3" max="3" step="0.05" value="0.5">
+          </div>
+          <button onclick="Simulator3D.flipPoles()" class="w-full py-2 bg-white border border-slate-300 rounded-xl text-[10px] font-black hover:bg-slate-100 transition active:scale-95 text-blue-900">
+            <i class="fas fa-arrows-rotate"></i> היפוך קוטביות
+          </button>
+        </div>
+
+        <!-- Coil params -->
+        <div class="sim-control-group space-y-3">
+          <h4 class="text-[10px] font-bold text-slate-400 uppercase">מבנה המערכת</h4>
+          <div>
+            <label>ליפופים (N): <span id="simValN" class="font-bold">5</span></label>
+            <input type="range" id="simInputN" min="1" max="30" step="1" value="5">
+          </div>
+          <div>
+            <label>רדיוס (R): <span id="simValR" class="font-bold">0.10</span> m</label>
+            <input type="range" id="simInputR" min="0.05" max="0.30" step="0.01" value="0.10">
+          </div>
+        </div>
+
+        <!-- Planet -->
+        <div class="sim-control-group space-y-3">
+          <h4 class="text-[10px] font-bold text-purple-600 uppercase">סביבה פלנטרית (B<sub>H</sub>)</h4>
+          <select id="simPlanet" class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 font-bold">
+            <option value="2.5e-5">ישראל (~25 μT)</option>
+            <option value="4.4e-5">ממוצע עולמי (~44 μT)</option>
+            <option value="5e-7">מאדים (~0.5 μT)</option>
+            <option value="0">ריק מגנטי</option>
+          </select>
+          <label class="flex items-center justify-between text-[10px] text-amber-700 font-bold bg-amber-50 p-2 rounded-lg cursor-pointer hover:bg-amber-100 transition">
+            סערה מגנטית (Jitter)
+            <input type="checkbox" id="simStorm" class="accent-amber-600">
+          </label>
+        </div>
+
+        <!-- Error panel -->
+        <div id="errorPanel" class="error-panel collapsed">
+          <div class="error-toggle" onclick="document.getElementById('errorPanel').classList.toggle('collapsed')">
+            <span><i class="fas fa-bug"></i> מודלי שגיאה</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="error-panel-body mt-3 space-y-3">
+            <div class="bg-white p-2 rounded-lg border space-y-1">
+              <label class="flex items-center gap-2 text-[10px] font-bold">
+                <input type="checkbox" id="errCalibration" class="accent-amber-600">
+                היסט כיול (°)
+              </label>
+              <input type="range" id="errCalibrationVal" min="-10" max="10" step="0.5" value="0" class="w-full">
+              <span id="errCalibrationDisp" class="text-[9px] text-slate-500 block text-center">0°</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border space-y-1">
+              <label class="flex items-center gap-2 text-[10px] font-bold">
+                <input type="checkbox" id="errNoise" class="accent-amber-600">
+                רעש מדידה (σ°)
+              </label>
+              <input type="range" id="errNoiseVal" min="0" max="5" step="0.1" value="1" class="w-full">
+              <span id="errNoiseDisp" class="text-[9px] text-slate-500 block text-center">1.0°</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border space-y-1">
+              <label class="flex items-center gap-2 text-[10px] font-bold">
+                <input type="checkbox" id="errPlacement" class="accent-amber-600">
+                היסט מיקום (ס"מ)
+              </label>
+              <input type="range" id="errPlacementVal" min="0" max="3" step="0.1" value="0" class="w-full">
+              <span id="errPlacementDisp" class="text-[9px] text-slate-500 block text-center">0 cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample button -->
+        <button onclick="Simulator3D.takeSample()" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-4 rounded-2xl font-black shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
+          <i class="fas fa-ruler-combined"></i> קח מדידה
+        </button>
+        <button onclick="Simulator3D.resetDefaults()" class="w-full py-2 bg-white border-2 border-slate-300 rounded-xl text-[10px] font-black hover:bg-slate-100 transition active:scale-95 text-slate-600">
+          <i class="fas fa-undo"></i> איפוס לברירת מחדל
+        </button>
+      </div>
+    </aside>
+
+    <!-- 3D Scene -->
+    <main class="lg:col-span-6">
+      <div class="bg-white rounded-[2.5rem] border shadow-sm overflow-hidden">
+        <!-- 3D container -->
+        <div id="sim3dContainer" class="three-canvas-container" style="height: 550px;">
+          <div id="sim3dLoading" class="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
+            <div class="text-center">
+              <div class="spinner mx-auto mb-3"></div>
+              <div class="text-xs text-slate-500">טוען סצנת 3D...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data readouts below 3D -->
+        <div class="grid grid-cols-3 gap-3 p-4">
+          <div class="bg-slate-900 p-4 rounded-2xl text-center shadow-lg border-b-4 border-green-500">
+            <div class="text-[10px] text-green-300 uppercase font-bold mb-1">זווית &theta; <span class="text-green-500">(נמדד)</span></div>
+            <div id="simValAngle" class="text-3xl text-green-400 font-mono font-bold">0.0°</div>
+            <div class="text-[8px] text-slate-600 mt-1">משתנה לפי הזרם</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-2xl text-center shadow-lg border-b-4 border-blue-500">
+            <div class="text-[10px] text-blue-300 uppercase font-bold mb-1">B<sub>loop</sub> [μT] <span class="text-blue-500">(מחושב)</span></div>
+            <div id="simValBLoop" class="text-3xl text-blue-400 font-mono font-bold">0.0</div>
+            <div class="text-[8px] text-slate-600 mt-1">השדה מהלולאה</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-2xl text-center shadow-lg border-b-4 border-purple-500">
+            <div class="text-[10px] text-purple-300 uppercase font-bold mb-1">B<sub>H</sub> [μT] <span class="text-purple-500">(קבוע)</span></div>
+            <div id="simBadgeBH" class="text-3xl text-purple-400 font-mono font-bold">25.0</div>
+            <div class="text-[8px] text-slate-600 mt-1">שדה כדור הארץ</div>
+          </div>
+        </div>
+        <!-- Saturation warning -->
+        <div id="simSaturationWarning" class="hidden mx-4 mb-2 p-3 bg-amber-50 border-2 border-amber-300 rounded-xl text-center text-sm font-bold text-amber-800">
+          <i class="fas fa-exclamation-triangle ml-1"></i>
+          שימו לב! כשהזווית קרובה ל-90° הגרף מאבד משמעות
+        </div>
+      </div>
+    </main>
+
+    <!-- Graph + Table -->
+    <aside class="lg:col-span-3">
+      <div class="bg-white p-5 rounded-3xl border shadow-sm h-full flex flex-col">
+        <h3 class="font-bold text-xs border-b pb-3 mb-4 text-green-800 uppercase flex justify-between items-center">
+          גרף המודל (אידיאלי)
+          <button onclick="Simulator3D.exportCSV()" class="text-blue-600 transition hover:scale-110" title="ייצוא CSV">
+            <i class="fas fa-file-csv"></i>
+          </button>
+        </h3>
+        <div class="h-[240px] mb-4 relative"><canvas id="simChart"></canvas></div>
+        <div id="simSlopeBadge" class="hidden text-center text-[10px] font-mono font-bold mb-2 p-2 bg-slate-100 rounded-lg">
+          <span class="text-slate-500">slope = </span><span id="simSlopeVal" class="text-emerald-700">--</span>
+          <span class="mx-2 text-slate-300">|</span>
+          <span class="text-slate-500">B<sub>H</sub> = </span><span id="simBHVal" class="text-purple-700">--</span><span class="text-slate-400"> μT</span>
+        </div>
+        <div class="flex-1 overflow-y-auto max-h-[200px] border rounded-xl bg-slate-50 shadow-inner">
+          <table class="w-full text-[10px] text-center">
+            <thead class="bg-white sticky top-0 border-b">
+              <tr>
+                <th class="p-1 border-l text-red-600">I [A]<div class="text-[8px] font-normal text-red-400">(משנים)</div></th>
+                <th class="p-1 border-l text-blue-600">&theta;°<div class="text-[8px] font-normal text-blue-400">(נמדד)</div></th>
+                <th class="p-1 border-l text-slate-400">tan(&theta;)</th>
+                <th class="p-1"></th>
+              </tr>
+            </thead>
+            <tbody id="simTableBody">
+              <tr><td colspan="4" class="py-10 italic text-slate-300">אין דגימות</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button onclick="Simulator3D.clearSamples()" class="mt-2 text-red-500 text-[10px] font-bold hover:underline">נקה דגימות</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- =============================================================== -->
+<!--                   PAGE 4: EARTH LAYERS                          -->
+<!-- =============================================================== -->
+<section id="page-earth" class="page space-y-12 pb-20">
+  <div class="text-center">
+    <h2 class="text-4xl font-black text-blue-900 mb-2">המסע אל הלב המגנטי</h2>
+    <p class="text-slate-600 max-w-2xl mx-auto">חקרו את מבנה כדור הארץ ואת מקור השדה המגנטי B<sub>H</sub></p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8 items-start">
+    <!-- 2D Earth -->
+    <div class="bg-slate-900 p-6 rounded-[3rem] shadow-2xl">
+      <div id="earth2dContainer" class="earth-visual-container">
+        <div class="layer-circle crust" data-layer="crust">
+          <span class="layer-label">קרום</span>
+        </div>
+        <div class="layer-circle mantle" data-layer="mantle">
+          <span class="layer-label">מעטפת</span>
+        </div>
+        <div class="layer-circle outer-core" data-layer="outer">
+          <span class="layer-label">ליבה חיצונית</span>
+        </div>
+        <div class="layer-circle inner-core" data-layer="inner">
+          <span class="layer-label">ליבה פנימית</span>
+        </div>
+        <div id="fieldDirectionIndicator" class="field-direction-indicator">
+          <i class="fas fa-arrow-up"></i>
+        </div>
+      </div>
+      <p class="text-white/40 text-[10px] mt-4 uppercase tracking-widest text-center">לחצו על שכבה כדי ללמוד עליה</p>
+    </div>
+
+    <!-- Layer info -->
+    <div class="space-y-6 text-right">
+      <div id="layerDetail" class="p-8 bg-white border-2 border-blue-100 rounded-[2rem] shadow-lg min-h-[250px]">
+        <h4 id="layerTitle" class="font-black text-2xl mb-4 text-blue-900">בחרו שכבה לחקירה</h4>
+        <p id="layerText" class="text-slate-600 leading-relaxed italic">השתמשו במודל כדור הארץ כדי ללמוד על המבנה הפנימי והקשר שלו לשדה.</p>
+        <div id="layerExtra" class="mt-4 p-4 bg-blue-50 rounded-xl text-xs text-blue-800 hidden"></div>
+        <div id="layerStats" class="mt-4 grid grid-cols-2 gap-2 hidden"></div>
+      </div>
+
+      <!-- Mars comparison -->
+      <div class="p-6 bg-gradient-to-br from-red-900 to-red-800 text-white rounded-2xl shadow-lg">
+        <h4 class="font-bold text-sm mb-3 flex items-center gap-2">
+          <i class="fas fa-planet-ringed"></i> השוואה: כדור הארץ מול מאדים
+        </h4>
+        <div class="grid grid-cols-2 gap-4 text-center text-xs">
+          <div class="bg-white/10 p-3 rounded-xl">
+            <div class="text-blue-300 font-bold mb-1">כדור הארץ</div>
+            <div class="text-xl font-mono font-bold">25-65 μT</div>
+            <div class="text-white/60 mt-1">דינמו פעיל</div>
+          </div>
+          <div class="bg-white/10 p-3 rounded-xl">
+            <div class="text-red-300 font-bold mb-1">מאדים</div>
+            <div class="text-xl font-mono font-bold">~0.5 μT</div>
+            <div class="text-white/60 mt-1">שרידי קרום בלבד</div>
+          </div>
+        </div>
+        <p class="text-xs text-white/70 mt-3 leading-relaxed">
+          ליבת מאדים התקררה לפני ~4 מיליארד שנה. הדינמו כבה, הרוח הסולארית הפשיטה את האטמוספרה, והמים נעלמו.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geological Timeline -->
+  <div class="bg-white p-8 rounded-[2.5rem] border shadow-sm space-y-6">
+    <h3 class="text-xl font-black text-slate-800">ציר זמן גאולוגי — היפוכי קטבים</h3>
+    <p class="text-xs text-slate-500">גררו את הסליידר כדי לנוע בזמן ולראות את שינויי הקוטביות</p>
+
+    <!-- Timeline bar visualization -->
+    <div id="timelineBar" class="w-full h-8 rounded-lg overflow-hidden flex" dir="ltr"></div>
+
+    <div class="flex items-center gap-4">
+      <span class="text-xs font-bold text-slate-600 whitespace-nowrap">0 Ma</span>
+      <input type="range" id="timelineSlider" min="0" max="800" step="0.1" value="0" class="timeline-slider flex-1">
+      <span class="text-xs font-bold text-slate-600 whitespace-nowrap">800 Ma</span>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <div class="flex gap-4 text-xs">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-600 rounded-sm inline-block"></span> נורמלי</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-500 rounded-sm inline-block"></span> הפוך</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-400 rounded-sm inline-block"></span> מעורב</span>
+      </div>
+      <div id="timelineInfo" class="text-sm font-bold text-slate-700">תקופה: Brunhes (נורמלי)</div>
+    </div>
+
+    <!-- Reversal animation state -->
+    <div id="reversalAnimation" class="hidden p-6 bg-gradient-to-r from-blue-50 to-red-50 rounded-2xl border-2 border-dashed border-slate-300">
+      <div class="text-center">
+        <div id="reversalState" class="text-lg font-black text-slate-800 mb-2">היפוך קטבים בפעולה</div>
+        <div id="reversalStrength" class="text-4xl font-mono font-bold text-blue-600">100%</div>
+        <div class="text-xs text-slate-500 mt-1">עוצמת השדה</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="js/physics.js"></script>
+<script src="js/app.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/labReport.js"></script>
+<script src="js/simulator3d.js"></script>
+<script src="js/earthLayers.js"></script>
+
+</body>
+</html>
